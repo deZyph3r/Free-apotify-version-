@@ -1,187 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MyFreeSpotify 🎵</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    header, footer {
-      text-align: center;
-      background-color: #1db954;
-      padding: 15px;
-    }
-
-    main {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .playlist, .player {
-      flex: 1;
-      background-color: #282828;
-      padding: 20px;
-      border-radius: 10px;
-      min-width: 300px;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      background: #1db954;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    li:hover {
-      background: #25d366;
-    }
-
-    audio {
-      width: 100%;
-      margin-top: 15px;
-    }
-
-    .search-box {
-      margin-bottom: 15px;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
-
-    .theme-toggle {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .theme-toggle button {
-      background: #1db954;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .light-mode {
-      background-color: #f5f5f5;
-      color: black;
-    }
-
-    .light-mode header,
-    .light-mode footer {
-      background-color: #1db954;
-      color: black;
-    }
-
-    .light-mode .playlist,
-    .light-mode .player {
-      background-color: #ffffff;
-      color: black;
-    }
-
-    .light-mode li {
-      background-color: #d4edda;
-      color: black;
-    }
-
-    .light-mode li:hover {
-      background-color: #c3e6cb;
-    }
-
-    .light-mode .theme-toggle button {
-      background: #25d366;
-      color: black;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Spotify Clone</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #b3b3b3; /* Light gray text */
+            overflow: hidden; /* Prevent body scroll, content will scroll */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #282828;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #535353;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a7a7a7;
+        }
+        .sidebar {
+            width: 250px;
+            min-width: 200px; /* Ensure sidebar doesn't get too small */
+            background-color: #000; /* Black sidebar */
+        }
+        .main-content {
+            flex-grow: 1;
+            background-color: #121212; /* Dark background for main content */
+            overflow-y: auto; /* Allow scrolling for main content */
+            padding-bottom: 90px; /* Space for the player bar */
+        }
+        .player-bar {
+            height: 90px;
+            background-color: #181818; /* Slightly lighter dark for player */
+        }
+        .progress-bar-container {
+            height: 4px;
+            background-color: #535353;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #1DB954; /* Spotify Green */
+            border-radius: 2px;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            background: #1DB954; /* Spotify Green */
+        }
+        .volume-slider::-moz-range-thumb {
+            background: #1DB954; /* Spotify Green */
+        }
+        .song-card {
+            transition: background-color 0.3s ease;
+        }
+        .song-card:hover {
+            background-color: #282828; /* Darker on hover */
+        }
+        .play-button {
+            background-color: #1DB954; /* Spotify Green */
+            color: white;
+            transition: transform 0.2s ease-in-out;
+        }
+        .play-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1>MyFreeSpotify 🎵</h1>
-    </header>
+<body class="flex flex-col h-screen">
 
-    <main>
-      <div class="playlist">
-        <h2>Playlist</h2>
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Search for a song..." onkeyup="filterSongs()">
-        </div>
-        <ul id="songList">
-          <li onclick="playSong('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Corporate__Motivational/Scott_Holmes_Music_-_Upbeat_Party.mp3')">🎉 Upbeat Party</li>
-          <li onclick="playSong('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Happy_Music/Scott_Holmes_Music_-_Happy_Whistling_Ukulele.mp3')">🎵 Happy Ukulele</li>
-          <li onclick="playSong('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Happy_Music/Scott_Holmes_Music_-_Carefree.mp3')">🌈 Carefree</li>
-          <li onclick="playSong('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Happy_Music/Scott_Holmes_Music_-_Our_Big_Adventure.mp3')">🚀 Our Big Adventure</li>
-          <li onclick="playSong('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Komiku/It_Grows/Komiku_-_Friends.mp3')">💖 Friends</li>
-        </ul>
-      </div>
+    <!-- Main Layout Container -->
+    <div class="flex flex-1 overflow-hidden">
 
-      <div class="player">
-        <h2>Now Playing</h2>
-        <p id="nowPlaying">No song playing...</p>
-        <audio id="audioPlayer" controls></audio>
-        <div class="theme-toggle">
-          <button onclick="toggleTheme()">Toggle Theme</button>
-        </div>
-      </div>
-    </main>
+        <!-- Sidebar -->
+        <aside class="sidebar p-4 flex flex-col space-y-4 text-white">
+            <!-- Logo/App Name -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-white">
+                    <i class="fab fa-spotify mr-2 text-green-500"></i>My Spotify
+                </h1>
+            </div>
 
-    <footer>
-      <p>🎧 Free Spotify Clone — Grade 9 Project</p>
-    </footer>
-  </div>
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
+                    <i class="fas fa-home mr-3 text-xl"></i>
+                    <span class="font-medium">Home</span>
+                </a>
+                <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
+                    <i class="fas fa-search mr-3 text-xl"></i>
+                    <span class="font-medium">Search</span>
+                </a>
+                <a href="#" class="flex items-center p-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
+                    <i class="fas fa-book-open mr-3 text-xl"></i>
+                    <span class="font-medium">Your Library</span>
+                </a>
+            </nav>
 
-  <script>
-    function playSong(songUrl) {
-      const player = document.getElementById('audioPlayer');
-      const nowPlaying = document.getElementById('nowPlaying');
+            <!-- Playlists Section -->
+            <div class="mt-6 pt-4 border-t border-gray-700">
+                <h2 class="text-lg font-semibold mb-3 text-gray-400">Playlists</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">My Top Songs</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Workout Mix</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Chill Vibes</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Road Trip</a></li>
+                </ul>
+            </div>
+        </aside>
 
-      player.src = songUrl;
-      player.play();
+        <!-- Main Content Area -->
+        <main class="main-content p-6">
+            <!-- Top Bar -->
+            <header class="flex justify-between items-center mb-8">
+                <div class="flex space-x-4 text-gray-400">
+                    <button class="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-white text-black px-4 py-2 rounded-full font-semibold hover:scale-105 transition-transform">Sign Up</button>
+                    <button class="bg-gray-800 text-white px-4 py-2 rounded-full font-semibold hover:scale-105 transition-transform">Log In</button>
+                </div>
+            </header>
 
-      nowPlaying.textContent = "Now Playing: " + decodeURIComponent(songUrl.split('/').pop().replace(/_/g, ' '));
-    }
+            <!-- Greeting -->
+            <h2 class="text-3xl font-bold text-white mb-6">Good Morning</h2>
 
-    function filterSongs() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const list = document.getElementById('songList').getElementsByTagName('li');
+            <!-- Quick Access / Recently Played -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                <div class="bg-gray-800 flex items-center rounded-md overflow-hidden shadow-lg hover:bg-gray-700 transition-colors duration-200 cursor-pointer">
+                    <img src="https://placehold.co/80x80/1DB954/FFFFFF?text=Album" alt="Album Art" class="w-20 h-20 object-cover rounded-l-md">
+                    <span class="ml-4 text-white font-semibold">Liked Songs</span>
+                </div>
+                <div class="bg-gray-800 flex items-center rounded-md overflow-hidden shadow-lg hover:bg-gray-700 transition-colors duration-200 cursor-pointer">
+                    <img src="https://placehold.co/80x80/535353/FFFFFF?text=Playlist" alt="Playlist Art" class="w-20 h-20 object-cover rounded-l-md">
+                    <span class="ml-4 text-white font-semibold">Daily Mix 1</span>
+                </div>
+                <div class="bg-gray-800 flex items-center rounded-md overflow-hidden shadow-lg hover:bg-gray-700 transition-colors duration-200 cursor-pointer">
+                    <img src="https://placehold.co/80x80/121212/FFFFFF?text=Podcast" alt="Podcast Art" class="w-20 h-20 object-cover rounded-l-
 
-      for (let i = 0; i < list.length; i++) {
-        let song = list[i].textContent.toLowerCase();
-        list[i].style.display = song.includes(input) ? "" : "none";
-      }
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("light-mode");
-    }
-  </script>
-</body>
-</html>
